@@ -1,0 +1,4 @@
+baseURL = 'https://earoa.github.io/'
+languageCode = 'en-us'
+title = 'GitPages Demo'
+theme = "ananke"
