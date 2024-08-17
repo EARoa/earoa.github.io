@@ -57,22 +57,22 @@ jobs:
             --minify \
             --baseURL "${{ steps.pages.outputs.base_url }}/"
      # Create a temporary directory and copy everything except 'ananke' into it
-      - name: Prepare general artifact (excluding ananke)
+      - name: Prepare general artifact (excluding images)
         run: |
           mkdir -p temp_public
-          rsync -av --progress public/ temp_public --exclude 'ananke'
+          rsync -av --progress public/ temp_public --exclude 'images'
 
-      # Upload the general artifact (excluding 'ananke')
+      # Upload the general artifact (excluding 'images')
       - name: Upload general artifact
         uses: actions/upload-pages-artifact@v1
         with:
           path: temp_public
 
-      # Upload only the 'ananke' folder
+      # Upload only the 'images' folder
       - name: Upload ananke artifact
         uses: actions/upload-pages-artifact@v1
         with:
-          path: public/ananke
+          path: public/images
 
   # Deployment job
   deploy:
