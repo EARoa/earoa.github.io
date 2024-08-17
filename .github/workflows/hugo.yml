@@ -56,7 +56,36 @@ jobs:
           hugo \
             --minify \
             --baseURL "${{ steps.pages.outputs.base_url }}/"
-     # Create a temporary directory and copy everything except 'ananke' into it
+  #    # Create a temporary directory and copy everything except 'ananke' into it
+  #     - name: Prepare general artifact (excluding images)
+  #       run: |
+  #         mkdir -p temp_public
+  #         rsync -av --progress public/ temp_public --exclude 'images'
+  #
+  #     # Upload the general artifact (excluding 'images')
+  #     - name: Upload general artifact
+  #       uses: actions/upload-pages-artifact@v1
+  #       with:
+  #         path: temp_public
+  #
+  #     # Upload only the 'images' folder
+  #     - name: Upload ananke artifact
+  #       uses: actions/upload-pages-artifact@v1
+  #       with:
+  #         path: public/images
+  #
+  # # Deployment job
+  # deploy:
+  #   environment:
+  #     name: github-pages
+  #     url: ${{ steps.deployment.outputs.page_url }}
+  #   runs-on: ubuntu-latest
+  #   needs: build
+  #   steps:
+  #     - name: Deploy to GitHub Pages
+  #       id: deployment
+  #       uses: actions/deploy-pages@v3
+# Create a temporary directory and copy everything except 'images' into it
       - name: Prepare general artifact (excluding images)
         run: |
           mkdir -p temp_public
@@ -68,20 +97,27 @@ jobs:
         with:
           path: temp_public
 
+      - name: Deploy general artifact to GitHub Pages
+        id: deploy-general
+        uses: actions/deploy-pages@v3
+
+  deploy-images:
+    runs-on: ubuntu-latest
+    needs: deploy-general
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Delay before deploying images
+        run: sleep 60  # Delay for 60 seconds
+
       # Upload only the 'images' folder
-      - name: Upload ananke artifact
+      - name: Upload images artifact
         uses: actions/upload-pages-artifact@v1
         with:
           path: public/images
 
-  # Deployment job
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
+      - name: Deploy images artifact to GitHub Pages
+        id: deploy-images
         uses: actions/deploy-pages@v3
