@@ -85,7 +85,7 @@ jobs:
   #     - name: Deploy to GitHub Pages
   #       id: deployment
   #       uses: actions/deploy-pages@v3
-# Create a temporary directory and copy everything except 'images' into it
+ # Create a temporary directory and copy everything except 'images' into it
       - name: Prepare general artifact (excluding images)
         run: |
           mkdir -p temp_public
@@ -101,9 +101,9 @@ jobs:
         id: deploy-general
         uses: actions/deploy-pages@v3
 
-  deploy-images:
+  deploy_images:
     runs-on: ubuntu-latest
-    needs: deploy-general
+    needs: deploy_general
 
     steps:
       - name: Checkout code
