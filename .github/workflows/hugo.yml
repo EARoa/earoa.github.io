@@ -56,16 +56,23 @@ jobs:
           hugo \
             --minify \
             --baseURL "${{ steps.pages.outputs.base_url }}/"
-      - name: Upload base artifact
-        uses: actions/upload-pages-artifact@v3
+     # Create a temporary directory and copy everything except 'ananke' into it
+      - name: Prepare general artifact (excluding ananke)
+        run: |
+          mkdir -p temp_public
+          rsync -av --progress public/ temp_public --exclude 'ananke'
+
+      # Upload the general artifact (excluding 'ananke')
+      - name: Upload general artifact
+        uses: actions/upload-pages-artifact@v1
         with:
-          path: |
-            ./public/
-            !./public/ananke/
-      - name: Upload Anake
-        uses: actions/upload-pages-artifact@v3
+          path: temp_public
+
+      # Upload only the 'ananke' folder
+      - name: Upload ananke artifact
+        uses: actions/upload-pages-artifact@v1
         with:
-          path: ./public/ananke
+          path: public/ananke
 
   # Deployment job
   deploy:
